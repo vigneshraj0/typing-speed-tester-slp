@@ -23,12 +23,22 @@ function restartTest() {
 }
 
 document.getElementById("typingArea").addEventListener("input", function () {
-    if (this.value === selectedText) {
+    let typedText = this.value.trim(); // Fixed: TO match selectedText correctly
+    let targetText = selectedText.trim(); // Fixed: For accuracy
+
+    if (typedText === targetText) {
         endTime = new Date().getTime();
-        let timeTaken = (endTime - startTime) / 1000;  // Issue: Incorrect time tracking
-        let words = selectedText.split(" ").length;
-        let wpm = Math.round((words / timeTaken) * 60); // Issue: Calculation not accurate
-        document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
-        // Issue: Textarea remains enabled, user can still type
+        let timeTaken = (endTime - startTime) / 1000 / 60; // Fixed: Converts milliseconds to min..
+
+        let words = targetText.split(/\s+/).length; // Fixed: To make the word count more accurate
+        let wpm = Math.round(words / timeTaken);
+
+        if (timeTaken < 0.1) { // If time taken to type is too low. Made this to protect shorter text inacurracy 
+            document.getElementById("result").innerText = `Too fast! Try again.`;
+        } else {
+            document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
+        }
+
+        document.getElementById("typingArea").disabled = true; // Fixed: Users cannot type after they submit
     }
 });
