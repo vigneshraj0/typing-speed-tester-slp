@@ -23,24 +23,47 @@ function restartTest() {
 }
 
 document.getElementById("typingArea").addEventListener("input", function () {
+    let typedText = this.value;
+    let targetText = selectedText;
 
-    let typedText = this.value.trim(); // Fixed: TO match selectedText correctly
-    let targetText = selectedText.trim(); // Fixed: For accuracy
+    // Create a string where each word is checked and color-coded
+    let feedbackText = '';
+    
+    let typedWords = typedText.split(/\s+/);
+    let targetWords = targetText.split(/\s+/);
 
+    // Compare each word and color the feedback
+    typedWords.forEach((word, index) => {
+        let targetWord = targetWords[index] || ''; // If there are fewer words typed than the target
+        if (word === targetWord) {
+            feedbackText += `<span style="color: green">${word}</span> `;
+        } else {
+            feedbackText += `<span style="color: red">${word}</span> `;
+        }
+    });
+
+    // Append the rest of the target text (if the user typed fewer words)
+    if (typedWords.length < targetWords.length) {
+        feedbackText += targetWords.slice(typedWords.length).map(word => `<span style="color: grey">${word}</span>`).join(' ');
+    }
+
+    // Update the feedback display
+    document.getElementById("textToType").innerHTML = feedbackText.trim();
+
+    // Check if the user has typed everything correctly
     if (typedText === targetText) {
         endTime = new Date().getTime();
-        let timeTaken = (endTime - startTime) / 1000 / 60; // Fixed: Converts milliseconds to min..
+        let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
 
-        let words = targetText.split(/\s+/).length; // Fixed: To make the word count more accurate
+        let words = targetText.split(/\s+/).length; // Word count
         let wpm = Math.round(words / timeTaken);
 
-        if (timeTaken < 0.1) { // If time taken to type is too low. Made this to protect shorter text inacurracy 
+        if (timeTaken < 0.1) {
             document.getElementById("result").innerText = `Too fast! Try again.`;
         } else {
             document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
         }
 
-        document.getElementById("typingArea").disabled = true; // Fixed: Users cannot type after they submit
-
+        document.getElementById("typingArea").disabled = true; // Disable the text area after completion
     }
 });
