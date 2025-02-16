@@ -12,7 +12,7 @@ function startTest() {
     document.getElementById("typingArea").value = "";
     document.getElementById("typingArea").disabled = false;
     document.getElementById("typingArea").focus();
-    startTime = new Date().getTime();
+    startTime = performance.now(); // More precise timing
 }
 
 function restartTest() {
@@ -23,6 +23,7 @@ function restartTest() {
 }
 
 document.getElementById("typingArea").addEventListener("input", function () {
+
     let typedText = this.value.trim(); // Fixed: TO match selectedText correctly
     let targetText = selectedText.trim(); // Fixed: For accuracy
 
@@ -40,5 +41,6 @@ document.getElementById("typingArea").addEventListener("input", function () {
         }
 
         document.getElementById("typingArea").disabled = true; // Fixed: Users cannot type after they submit
+
     }
 });
