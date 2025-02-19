@@ -44,7 +44,7 @@ document.getElementById("typingArea").addEventListener("input", function () {
 
     // Append the rest of the target text (if the user typed fewer words)
     if (typedWords.length < targetWords.length) {
-        feedbackText += targetWords.slice(typedWords.length).map(word => `<span style="color: grey">${word}</span>`).join(' ');
+        feedbackText += targetWords.slice(typedWords.length).map(word => `<span style="color: white">${word}</span>`).join(' ');
     }
 
     // Update the feedback display
@@ -52,7 +52,7 @@ document.getElementById("typingArea").addEventListener("input", function () {
 
     // Check if the user has typed everything correctly
     if (typedText === targetText) {
-        endTime = new Date().getTime();
+        endTime = performance.now();
         let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
 
         let words = targetText.split(/\s+/).length; // Word count
