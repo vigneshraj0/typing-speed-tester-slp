@@ -12,7 +12,7 @@ function startTest() {
     document.getElementById("typingArea").value = "";
     document.getElementById("typingArea").disabled = false;
     document.getElementById("typingArea").focus();
-    startTime = performance.now(); // More precise timing
+    startTime = performance.now();
 }
 
 function restartTest() {
@@ -26,36 +26,29 @@ document.getElementById("typingArea").addEventListener("input", function () {
     let typedText = this.value;
     let targetText = selectedText;
 
-    // Create a string where each word is checked and color-coded
-    let feedbackText = '';
+    let feedbackText = "";
     
-    let typedWords = typedText.split(/\s+/);
-    let targetWords = targetText.split(/\s+/);
-
-    // Compare each word and color the feedback
-    typedWords.forEach((word, index) => {
-        let targetWord = targetWords[index] || ''; // If there are fewer words typed than the target
-        if (word === targetWord) {
-            feedbackText += `<span style="color: green">${word}</span> `;
+    for (let i = 0; i < targetText.length; i++) {
+        if (i < typedText.length) {
+            if (typedText[i] === targetText[i]) {
+                feedbackText += `<span style="color: green">${targetText[i]}</span>`;
+            } else {
+                feedbackText += `<span style="color: red">${targetText[i]}</span>`;
+            }
         } else {
-            feedbackText += `<span style="color: red">${word}</span> `;
+            feedbackText += `<span style="color: grey">${targetText[i]}</span>`;
         }
-    });
-
-    // Append the rest of the target text (if the user typed fewer words)
-    if (typedWords.length < targetWords.length) {
-        feedbackText += targetWords.slice(typedWords.length).map(word => `<span style="color: grey">${word}</span>`).join(' ');
     }
 
-    // Update the feedback display
-    document.getElementById("textToType").innerHTML = feedbackText.trim();
+    // Update the display text with real-time feedback
+    document.getElementById("textToType").innerHTML = feedbackText;
 
-    // Check if the user has typed everything correctly
+    // Check if user has completed typing correctly
     if (typedText === targetText) {
-        endTime = new Date().getTime();
-        let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
+        endTime = performance.now();
+        let timeTaken = (endTime - startTime) / 1000 / 60; // Convert ms to minutes
 
-        let words = targetText.split(/\s+/).length; // Word count
+        let words = targetText.split(/\s+/).length;
         let wpm = Math.round(words / timeTaken);
 
         if (timeTaken < 0.1) {
@@ -64,6 +57,6 @@ document.getElementById("typingArea").addEventListener("input", function () {
             document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
         }
 
-        document.getElementById("typingArea").disabled = true; // Disable the text area after completion
+        document.getElementById("typingArea").disabled = true;
     }
 });
