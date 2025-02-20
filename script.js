@@ -25,28 +25,28 @@ function restartTest() {
 document.getElementById("typingArea").addEventListener("input", function () {
     let typedText = this.value;
     let targetText = selectedText;
-
-    let feedbackText = "";
     
-    for (let i = 0; i < targetText.length; i++) {
+    let feedbackHTML = ""; 
+    
+    for (let i = 0; i < targetText.length; i++) { //fixed realtime highlighting
         if (i < typedText.length) {
             if (typedText[i] === targetText[i]) {
-                feedbackText += `<span style="color: green">${targetText[i]}</span>`;
+                feedbackHTML += `<span style="color: green">${targetText[i]}</span>`;
             } else {
-                feedbackText += `<span style="color: red">${targetText[i]}</span>`;
+                feedbackHTML += `<span style="color: red">${targetText[i]}</span>`;
             }
         } else {
-            feedbackText += `<span style="color: grey">${targetText[i]}</span>`;
+            feedbackHTML += `<span style="color: grey">${targetText[i]}</span>`;
         }
     }
 
-    // Update the display text with real-time feedback
-    document.getElementById("textToType").innerHTML = feedbackText;
+    document.getElementById("textToType").innerHTML = feedbackHTML;
 
-    // Check if user has completed typing correctly
+    // Check if the user has finished typing correctly
     if (typedText === targetText) {
         endTime = performance.now();
-        let timeTaken = (endTime - startTime) / 1000 / 60; // Convert ms to minutes
+        let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
+
 
         let words = targetText.split(/\s+/).length;
         let wpm = Math.round(words / timeTaken);
@@ -57,6 +57,8 @@ document.getElementById("typingArea").addEventListener("input", function () {
             document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
         }
 
-        document.getElementById("typingArea").disabled = true;
+
+        document.getElementById("typingArea").disabled = true; // Disable typing after completion
+
     }
 });
