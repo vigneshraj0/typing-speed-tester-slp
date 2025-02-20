@@ -12,7 +12,7 @@ function startTest() {
     document.getElementById("typingArea").value = "";
     document.getElementById("typingArea").disabled = false;
     document.getElementById("typingArea").focus();
-    startTime = performance.now(); // More precise timing
+    startTime = performance.now();
 }
 
 function restartTest() {
@@ -47,7 +47,8 @@ document.getElementById("typingArea").addEventListener("input", function () {
         endTime = performance.now();
         let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
 
-        let words = targetText.split(/\s+/).length; // Word count
+
+        let words = targetText.split(/\s+/).length;
         let wpm = Math.round(words / timeTaken);
 
         if (timeTaken < 0.1) {
@@ -56,6 +57,8 @@ document.getElementById("typingArea").addEventListener("input", function () {
             document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
         }
 
+
         document.getElementById("typingArea").disabled = true; // Disable typing after completion
+
     }
 });
