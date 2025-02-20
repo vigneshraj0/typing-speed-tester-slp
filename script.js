@@ -25,34 +25,26 @@ function restartTest() {
 document.getElementById("typingArea").addEventListener("input", function () {
     let typedText = this.value;
     let targetText = selectedText;
-
-    // Create a string where each word is checked and color-coded
-    let feedbackText = '';
     
-    let typedWords = typedText.split(/\s+/);
-    let targetWords = targetText.split(/\s+/);
-
-    // Compare each word and color the feedback
-    typedWords.forEach((word, index) => {
-        let targetWord = targetWords[index] || ''; // If there are fewer words typed than the target
-        if (word === targetWord) {
-            feedbackText += `<span style="color: green">${word}</span> `;
+    let feedbackHTML = ""; 
+    
+    for (let i = 0; i < targetText.length; i++) { //fixed realtime highlighting
+        if (i < typedText.length) {
+            if (typedText[i] === targetText[i]) {
+                feedbackHTML += `<span style="color: green">${targetText[i]}</span>`;
+            } else {
+                feedbackHTML += `<span style="color: red">${targetText[i]}</span>`;
+            }
         } else {
-            feedbackText += `<span style="color: red">${word}</span> `;
+            feedbackHTML += `<span style="color: grey">${targetText[i]}</span>`;
         }
-    });
-
-    // Append the rest of the target text (if the user typed fewer words)
-    if (typedWords.length < targetWords.length) {
-        feedbackText += targetWords.slice(typedWords.length).map(word => `<span style="color: grey">${word}</span>`).join(' ');
     }
 
-    // Update the feedback display
-    document.getElementById("textToType").innerHTML = feedbackText.trim();
+    document.getElementById("textToType").innerHTML = feedbackHTML;
 
-    // Check if the user has typed everything correctly
+    // Check if the user has finished typing correctly
     if (typedText === targetText) {
-        endTime = new Date().getTime();
+        endTime = performance.now();
         let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
 
         let words = targetText.split(/\s+/).length; // Word count
@@ -64,6 +56,6 @@ document.getElementById("typingArea").addEventListener("input", function () {
             document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
         }
 
-        document.getElementById("typingArea").disabled = true; // Disable the text area after completion
+        document.getElementById("typingArea").disabled = true; // Disable typing after completion
     }
 });
