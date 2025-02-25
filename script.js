@@ -1,64 +1,51 @@
-const sampleTexts = [
-    "The quick brown fox jumps over the lazy dog.",
-    "Typing speed tests are fun and challenging.",
-    "Improve your typing by practicing every day."
-];
-
-let startTime, endTime, selectedText;
+let startTime;
+let testStarted = false;
+let originalText = "Type this text as fast as you can!";
+let typingArea = document.getElementById("typingArea");
+let textToTypeElement = document.getElementById("textToType");
+let resultElement = document.getElementById("result");
 
 function startTest() {
-    selectedText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-    document.getElementById("textToType").innerText = selectedText;
-    document.getElementById("typingArea").value = "";
-    document.getElementById("typingArea").disabled = false;
-    document.getElementById("typingArea").focus();
-    startTime = performance.now();
+    typingArea.disabled = false;  // Enable typing area
+    typingArea.value = "";  // Clear previous input
+    typingArea.focus();
+    textToTypeElement.textContent = originalText;  // Show the original text
+    testStarted = true;
+    startTime = new Date().getTime();  // Track the start time
+    typingArea.addEventListener('input', checkTyping);  // Start checking input
+}
+
+function checkTyping() {
+    let typedText = typingArea.value;
+    let textToType = originalText;
+    let errorMessage = "";
+    
+    // Compare typed text with the original text character by character
+    for (let i = 0; i < typedText.length; i++) {
+        if (typedText[i] !== textToType[i]) {
+            errorMessage += "<span style='color: red'>" + typedText[i] + "</span>";
+        } else {
+            errorMessage += typedText[i];
+        }
+    }
+
+    // Update error display with incorrect characters highlighted
+    document.getElementById("errorMessage").innerHTML = errorMessage;
+
+    // If the user typed the entire text correctly, stop the test and show the result
+    if (typedText === textToType) {
+        let endTime = new Date().getTime();
+        let timeTaken = (endTime - startTime) / 1000;  // Time in seconds
+        let wpm = (typedText.length / 5) / (timeTaken / 60);  // Calculate words per minute
+        resultElement.textContent = `Test Complete! Your typing speed is ${wpm.toFixed(2)} words per minute.`;
+        typingArea.disabled = true;  // Disable typing after test completion
+        typingArea.removeEventListener('input', checkTyping);  // Stop checking input
+    }
 }
 
 function restartTest() {
-    document.getElementById("typingArea").value = "";
-    document.getElementById("textToType").innerText = "Click 'Start' to begin the test.";
-    document.getElementById("result").innerText = "";
-    document.getElementById("typingArea").disabled = true;
+    typingArea.disabled = true;
+    resultElement.textContent = "";
+    textToTypeElement.textContent = "Click 'Start' to begin the test.";
+    document.getElementById("errorMessage").innerHTML = "";
 }
-
-document.getElementById("typingArea").addEventListener("input", function () {
-    let typedText = this.value;
-    let targetText = selectedText;
-    
-    let feedbackHTML = ""; 
-    
-    for (let i = 0; i < targetText.length; i++) { //fixed realtime highlighting
-        if (i < typedText.length) {
-            if (typedText[i] === targetText[i]) {
-                feedbackHTML += `<span style="color: green">${targetText[i]}</span>`;
-            } else {
-                feedbackHTML += `<span style="color: red">${targetText[i]}</span>`;
-            }
-        } else {
-            feedbackHTML += `<span style="color: grey">${targetText[i]}</span>`;
-        }
-    }
-
-    document.getElementById("textToType").innerHTML = feedbackHTML;
-
-    // Check if the user has finished typing correctly
-    if (typedText === targetText) {
-        endTime = performance.now();
-        let timeTaken = (endTime - startTime) / 1000 / 60; // Convert milliseconds to minutes
-
-
-        let words = targetText.split(/\s+/).length;
-        let wpm = Math.round(words / timeTaken);
-
-        if (timeTaken < 0.1) {
-            document.getElementById("result").innerText = `Too fast! Try again.`;
-        } else {
-            document.getElementById("result").innerText = `You typed at ${wpm} words per minute!`;
-        }
-
-
-        document.getElementById("typingArea").disabled = true; // Disable typing after completion
-
-    }
-});
